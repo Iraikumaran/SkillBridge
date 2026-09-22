@@ -1,30 +1,69 @@
-## Dataset Setup
+# SkillBridge: Canadian Labour-Market Skill Recommender
 
-The complete dataset is distributed separately because of its size and is not stored in the Git commit history.
+**Data mining team project, University of Victoria (2026). Team of 6.**
 
-### Download
+SkillBridge recommends the skills that matter for a given occupation in Canada, and predicts labour shortages, salary and regional demand. It is built on five national data sources merged into one modelling base.
 
-1. Open the latest GitHub Release:
+## Results at a glance
 
-   https://github.com/aarij13406/SkillBridge/releases/latest
+| Component | Task | Result |
+|---|---|---|
+| Skill recommender (BPR) | Rank the core skills for each occupation | nDCG@5 **0.617**, MRR **0.821**, ROC-AUC **0.99** |
+| Shortage classifier | Predict which occupations face labour shortages | weighted F1 **0.76** |
+| Salary and demand regressor | Predict salary and regional demand | MAE **$12,088**, R² **0.64** (target was 0.4) |
+| NLP skill extractor | Map free-text job postings onto the skill taxonomy | micro-F1 **0.37** |
 
-2. Download `data.zip`.
+- The recommender was benchmarked as a five-model ladder against real baselines. BPR won.
+- Fairness was audited across TEER skill levels.
+- Weak spots are reported openly. The NLP extractor is the weakest component and is documented as such.
 
-3. Extract the ZIP file into the root project directory, so `raw/` and
-   `processed/` land inside a `datasets/` folder, and rename `processed/`
-   to `clean/`.
+## Data
 
-The final structure should be:
+Five sources merged into one base:
 
-```text
-SkillBridge/
-|-- datasets/
-|   |-- raw/
-|   |-- clean/
-|-- figures/
-|-- results/
-|-- scripts/
-|-- skillbridge/
-|-- README.md
-|-- requirements.txt
+- 900 occupation competency profiles (181 descriptors each)
+- Four months of Job Bank postings
+- LinkedIn Canada postings and skills
+- Employment projections
+- The NOC occupation taxonomy
+
+The ETL step removed **51,103 duplicate records**.
+
+## The key decision
+
+The first framing, link prediction on occupation-skill pairs, was broken: 162,899 of 162,900 cells were already observed, so the right answer was always "yes". We caught this before modelling and reframed the task as ordinal matrix completion, which gives a meaningful binary target with a 14.1% positive rate.
+
+## Repository structure
+
 ```
+SkillBridge/
+├── datasets/
+│   ├── raw/
+│   └── clean/
+├── figures/        charts used in the report
+├── results/        model outputs and metrics
+├── scripts/        pipeline and experiment scripts
+├── skillbridge/    core package
+├── webapp/         demo web app
+├── README.md
+└── requirements.txt
+```
+
+## Setup
+
+The dataset is too large for the repo and is distributed as a release file.
+
+1. Download `data.zip` from the [latest release](https://github.com/aarij13406/SkillBridge/releases/latest).
+2. Extract it into the project root.
+3. Move the `raw/` and `processed/` folders into a `datasets/` folder, and rename `processed/` to `clean/`.
+4. Install dependencies:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate          # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+## Credits
+
+Forked from [aarij13406/SkillBridge](https://github.com/aarij13406/SkillBridge), the team's original repository.
