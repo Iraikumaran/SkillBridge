@@ -2,6 +2,25 @@
 
 **Data mining team project, University of Victoria (2026). Team of 6.**
 
+## My contribution
+
+This is my fork of our six-person team project. My own work on it was:
+
+- **Job skill recommender.** Represented job-posting text and the NOC occupation
+  taxonomy as SBERT sentence embeddings so differently worded descriptions of the
+  same skill landed near each other. Benchmarked five models; Bayesian Personalised
+  Ranking won at nDCG@5 0.617 and ROC-AUC 0.99.
+- **Labour shortage classifier.** Built the shortage / balance / surplus classifier,
+  weighted F1 0.76.
+- **Caught the problem framing before modelling.** The original proposal treated this
+  as link prediction, but the OaSIS matrix is essentially complete (162,899 of 162,900
+  cells observed), so a model answering "yes" to everything scores perfectly. I
+  reframed it as ordinal matrix completion with a meaningful 14.1% positive-rate
+  target.
+
+The ETL that merged five national sources and removed 51,103 duplicate records, the
+salary and regional-demand regressor, and the web app were team work.
+
 SkillBridge recommends the skills that matter for a given occupation in Canada, and predicts labour shortages, salary and regional demand. It is built on five national data sources merged into one modelling base.
 
 ## Results at a glance
